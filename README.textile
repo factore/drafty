@@ -18,10 +18,8 @@ First create the table for your drafts.  This should essentially be a copy of yo
         t.string    :title
         t.text      :content
         t.integer   :author_id
-        
-        # Required for Drafty
-        t.integer   :draft_parent_id
-        t.timestamps
+        t.integer   :draft_parent_id # Required for Drafty
+        t.timestamps # Required for Drafty
       end
     end
     
