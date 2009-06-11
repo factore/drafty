@@ -1,0 +1,74 @@
+h1. Drafty
+Drafty is a Rails plugin that gives you a quick and easy way to save draft copies of objects.  Parts of it are loosely based on has_draft by railsgarden.   
+
+h2. Installation
+
+  script/plugin install http://github.com/factore/drafty.gif
+
+h2. Usage
+
+For this example we'll be creating drafts of articles.  Articles have a title, content, and they belong to an author.  
+
+First create the table for your drafts.  This should essentially be a copy of your articles table, but with a new integer field called "draft_parent_id"
+
+  class CreateArticleDrafts > ActiveRecord::Migration
+    def self.up
+      create_table :article_drafts, :force => true do
+        t.string    :title
+        t.text      :content
+        t.integer   :author_id
+        
+        # Required for Drafty
+        t.integer   :draft_parent_id
+        t.timestamps
+      end
+    end
+    
+    def self.down
+      drop_table :article_drafts
+    end
+  end
+  
+Next make your article model drafty!
+  
+  class Article > ActiveRecord::Base
+    is_drafty
+    belongs_to :author
+    
+    validates_presence_of :title
+  end
+  
+Drafty adds a few methods to your Article class while largely trying to stay out of your way.  First, let's look at how we create a draft copy.
+
+  class ArticlesController > ApplicationController
+    def create_draft
+      Article.create_draft(params[:article], params[:id])
+      redirect_to edit_article_path(params[:id])
+    end
+  end
+  
+Just pass it your article params hash from the form, as well as the ID of the article that you're creating a draft for.  Drafty doesn't care about your validations, 
+so go ahead and save drafts of your half finished articles.  
+
+Pulling out the latest revision of a given article is easy as well.
+  
+  class ArticlesController > ApplicationController
+    def edit
+      @article = Article.draft_find(params[:id])
+    end
+  end
+  
+No matter what, you'll receive an instance of Article, however, the attributes are taken from either the most recent draft, 
+or the article itself, depending on which has the newest updates.      
+
+You can also revert to the last official saved article, get a collection of all the drafts, and load up a specific draft.
+
+  @article = Article.find(params[:id])
+  @article.revert # Article.draft_find(params[:id]) will now return @article
+  @article.drafts # Returns a collection of all drafts of this article, from newest to oldest
+  @article.load_draft(params[:draft_id]) # Replaces @article's attributes with those of a specific draft.
+  
+Given these tools, how you choose to implement and use Drafty is up to you!
+
+
+Copyright (c) 2009 factor[e] design initiative, released under the MIT license
