@@ -1,4 +1,7 @@
 h1. Drafty
+
+h2. Overview
+
 Drafty is a Rails plugin that gives you a quick and easy way to save draft copies of objects.  Parts of it are loosely based on has_draft by railsgarden.   
 
 h2. Installation
