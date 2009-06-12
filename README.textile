@@ -4,7 +4,7 @@ Drafty is a Rails plugin that gives you a quick and easy way to save draft copie
 
 h2. Installation
 
-  script/plugin install http://github.com/factore/drafty.gif
+  script/plugin install git@github.com:factore/drafty.git  
 
 h2. Usage
 
@@ -33,7 +33,6 @@ Next make your article model drafty!
   class Article > ActiveRecord::Base
     is_drafty
     belongs_to :author
-    
     validates_presence_of :title
   end
   
